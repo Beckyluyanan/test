@@ -1,12 +1,14 @@
 import gradio as gr
-from MMEdu import MMClassification as cls
-model = cls(backbone = 'MobileNet')
-checkpoint='model/latest.pth'
+import BaseDeploy as bd
+
+model_path = 'model/cats_dogs.onnx'
 
 def predict(img):
-    result = model.inference(image=img, show=False, checkpoint=checkpoint)
-    return str(result)
+    model = bd(model_path)
+    result = model.inference(img)
+    result = model.print_result(result)
+    return result
 
-image = gr.inputs.Image(type="filepath")
+image = gr.inputs.Image(type="filepath",source="webcam")
 demo = gr.Interface(fn=predict, inputs=image, outputs="text")
 demo.launch(share=True)
